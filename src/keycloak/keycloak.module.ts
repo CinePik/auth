@@ -12,23 +12,17 @@ import {
 } from 'nest-keycloak-connect';
 
 import { APP_GUARD } from '@nestjs/core';
-import { UsersService } from 'src/users/users.service';
 import { KeycloakService } from './keycloak.service';
 import { HttpModule } from '@nestjs/axios';
+import { KeycloakConfigService } from '../config/keycloak-config.service';
+import { ConfigModule } from '../config/config.module';
 
 @Module({
   imports: [
     HttpModule,
-    KeycloakConnectModule.register({
-      authServerUrl: 'http://localhost:8080',
-
-      realm: 'cinepik',
-
-      clientId: 'nest-auth',
-
-      secret: 'kDTL1eSxPIFR8Ai0UXjvzYkaZVpy2M6c',
-
-      // Secret key of the client taken from keycloak server
+    KeycloakConnectModule.registerAsync({
+      useExisting: KeycloakConfigService,
+      imports: [ConfigModule],
     }),
   ],
 
