@@ -6,7 +6,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @Get('/public')
   @Unprotected()
-  getpublic(): string {
+  getPublic(): string {
     return `${this.usersService.getHello()} from public`;
   }
   @Get('/user')
