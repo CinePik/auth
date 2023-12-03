@@ -71,42 +71,64 @@ export class AuthService {
   //   return data;
   // }
 
-  async register(registerDto: RegisterDto): Promise<any> {
-    //TODO(mevljas): use secrets from env
-    const { data } = await firstValueFrom(
-      this.httpService
-        .post(
-          'http://localhost:8080/admin/realms/cinepik/users',
-          {
-            username: registerDto.username,
-            firstName: registerDto.firstName,
-            lastName: registerDto.lastName,
-            enabled: 'true',
-            credentials: [
-              {
-                type: 'password',
-                value: registerDto.password,
-                temporary: false,
-              },
-            ],
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: 'Bearer ' + (await this.getAdminToken()),
-            },
-          },
-        )
-        .pipe(
-          catchError((error: AxiosError) => {
-            this.logger.error(error.response.data);
-            throw new HttpException(error.response.data, error.response.status);
-          }),
-        ),
-    );
-    return data;
+  async register(
+    username: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+  ): Promise<LoginResponse> {
+    const { access_token, expires_in, refresh_token, refresh_expires_in } =
+      await this.keycloakService
+        .register(username, password, firstName, lastName)
+        .catch((error) => {
+          console.log(error);
+          throw new UnauthorizedException(error);
+        });
+
+    return {
+      access_token,
+      refresh_token,
+      expires_in,
+      refresh_expires_in,
+    };
   }
+
+  // async register(registerDto: RegisterDto): Promise<any> {
+  //   //TODO(mevljas): use secrets from env
+  //   const { data } = await firstValueFrom(
+  //     this.httpService
+  //       .post(
+  //         'http://localhost:8080/admin/realms/cinepik/users',
+  //         {
+  //           username: registerDto.username,
+  //           firstName: registerDto.firstName,
+  //           lastName: registerDto.lastName,
+  //           enabled: 'true',
+  //           credentials: [
+  //             {
+  //               type: 'password',
+  //               value: registerDto.password,
+  //               temporary: false,
+  //             },
+  //           ],
+  //         },
+  //         {
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //             Accept: 'application/json',
+  //             Authorization: 'Bearer ' + (await this.getAdminToken()),
+  //           },
+  //         },
+  //       )
+  //       .pipe(
+  //         catchError((error: AxiosError) => {
+  //           this.logger.error(error.response.data);
+  //           throw new HttpException(error.response.data, error.response.status);
+  //         }),
+  //       ),
+  //   );
+  //   return data;
+  // }
 
   async getAdminToken(): Promise<String> {
     //TODO(mevljas): use secrets from env

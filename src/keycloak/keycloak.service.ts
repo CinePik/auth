@@ -1,5 +1,10 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
@@ -27,6 +32,7 @@ export class KeycloakService {
   private realm: string;
   private clientId: string;
   private clientSecret: string;
+  private adminClientSecret: string;
   private readonly logger = new Logger(KeycloakService.name);
 
   constructor(
@@ -37,6 +43,9 @@ export class KeycloakService {
     this.realm = this.configService.get('KEYCLOAK_REALM');
     this.clientId = this.configService.get('KEYCLOAK_CLIENT_ID');
     this.clientSecret = this.configService.get('KEYCLOAK_CLIENT_SECRET');
+    this.adminClientSecret = this.configService.get(
+      'KEYCLOAK_ADMIN_CLIENT_SECRET',
+    );
   }
 
   async login(username: string, password: string): Promise<LoginResponse> {
@@ -60,6 +69,75 @@ export class KeycloakService {
         ),
     );
 
+    return data;
+  }
+
+  async register(
+    username: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+  ): Promise<LoginResponse> {
+    const { data } = await firstValueFrom(
+      this.httpService
+        .post(
+          `${this.baseURL}/admin/realms/${this.realm}/users`,
+          {
+            username,
+            firstName,
+            lastName,
+            enabled: 'true',
+            credentials: [
+              {
+                type: 'password',
+                value: password,
+                temporary: false,
+              },
+            ],
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization:
+                'Bearer ' + (await this.getAdminToken()).access_token,
+            },
+          },
+        )
+        .pipe(
+          catchError((error: AxiosError) => {
+            this.logger.error(error);
+            throw new UnauthorizedException(error);
+          }),
+        ),
+    );
+
+    return data;
+  }
+
+  async getAdminToken(): Promise<LoginResponse> {
+    const { data } = await firstValueFrom(
+      this.httpService
+        .post(
+          `${this.baseURL}/realms/master/protocol/openid-connect/token`,
+          {
+            grant_type: 'client_credentials',
+            client_id: 'admin-cli',
+            client_secret: this.adminClientSecret,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          },
+        )
+        .pipe(
+          catchError((error: AxiosError) => {
+            this.logger.error(error.response.data);
+            throw new HttpException(error.response.data, error.response.status);
+          }),
+        ),
+    );
     return data;
   }
 

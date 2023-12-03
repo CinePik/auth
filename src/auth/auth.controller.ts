@@ -17,9 +17,12 @@ export class AuthController {
 
   @Post('/register')
   @Unprotected()
-  async register(
-    @Body() registerDto: RegisterDto,
-  ): Promise<Observable<AxiosResponse<any, any>>> {
-    return this.authService.register(registerDto);
+  async register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(
+      registerDto.username,
+      registerDto.password,
+      registerDto.firstName,
+      registerDto.lastName,
+    );
   }
 }
