@@ -1,32 +1,93 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
+import {
+  HttpException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { KeycloakService } from '../keycloak/keycloak.service';
+
+type LoginResponse = {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  refresh_expires_in: number;
+};
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
+    private readonly httpService: HttpService,
+    private readonly keycloakService: KeycloakService,
   ) {}
 
-  /**
-   * Retrieve a user and verify the password. Called from Passport local strategy.
-   */
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
-    if (user && user.password === pass) {
-      // strip the password property from the user object
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
+  async login(username: string, password: string): Promise<LoginResponse> {
+    const { access_token, expires_in, refresh_token, refresh_expires_in } =
+      await this.keycloakService.login(username, password).catch((error) => {
+        console.log(error);
+        throw new UnauthorizedException(error);
+      });
+
+    return {
+      access_token,
+      refresh_token,
+      expires_in,
+      refresh_expires_in,
+    };
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+  async register(
+    username: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+  ): Promise<LoginResponse> {
+    const { access_token, expires_in, refresh_token, refresh_expires_in } =
+      await this.keycloakService
+        .register(username, password, firstName, lastName)
+        .catch((error) => {
+          console.log(error);
+          throw new UnauthorizedException(error);
+        });
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token,
+      refresh_token,
+      expires_in,
+      refresh_expires_in,
     };
+  }
+
+  async getProfile(token: string): Promise<any> {
+    this.logger.debug(`getProfile: ${token}`);
+    const data = await this.keycloakService
+      .getUserInfo(token)
+      .catch((error) => {
+        console.log(error);
+        throw new UnauthorizedException(error);
+      });
+
+    return data;
+  }
+
+  async refreshToken(token: string): Promise<any> {
+    const data = await this.keycloakService
+      .refreshToken(token)
+      .catch((error) => {
+        console.log(error);
+        throw new UnauthorizedException(error);
+      });
+
+    return data;
+  }
+
+  async logout(token: string): Promise<any> {
+    const data = await this.keycloakService.logout(token).catch((error) => {
+      console.log(error);
+      throw new UnauthorizedException(error);
+    });
+
+    return data;
   }
 }

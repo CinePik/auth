@@ -1,26 +1,23 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { jwtConstants } from './constants';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+  constructor(configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret,
+      secretOrKey: configService.get('KEYCLOAK_REALM_RSA_PUBLIC_KEY'),
     });
   }
 
-  /**
-   * Passport first verifies the JWT's signature and decodes the JSON.
-   * It then invokes the validate() method passing the decoded JSON as its single parameter.
-   * <p>
-   * Passport will build a user object based on the return value of the validate() method,
-   * and attach it as a property on the Request object.
-   */
   async validate(payload: any) {
-    return { userId: payload.sub, username: payload.username };
+    /**
+     * This can be obtained via req.user in the Controllers
+     * This is where we validate that the user is valid and delimit the payload returned to req.user
+     */
+    return { userId: payload.sub };
   }
 }
