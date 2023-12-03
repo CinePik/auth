@@ -4,11 +4,7 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginDto } from './dto/login.dto';
-import axios, { AxiosError, AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
-import { Observable, catchError, firstValueFrom } from 'rxjs';
-import { RegisterDto } from './dto/register.dto';
 import { KeycloakService } from '../keycloak/keycloak.service';
 
 type LoginResponse = {
@@ -77,7 +73,7 @@ export class AuthService {
 
   async refreshToken(token: string): Promise<any> {
     const data = await this.keycloakService
-      .getUserInfo(token)
+      .refreshToken(token)
       .catch((error) => {
         console.log(error);
         throw new UnauthorizedException(error);

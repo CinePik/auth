@@ -2,20 +2,15 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Post,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Public, Unprotected } from 'nest-keycloak-connect';
+import { Unprotected } from 'nest-keycloak-connect';
 import { LoginDto } from './dto/login.dto';
-import { AxiosResponse } from 'axios';
-import { Observable } from 'rxjs';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { LogoutDto } from './dto/logout.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
@@ -49,6 +44,7 @@ export class AuthController {
   }
 
   @Post('/refresh')
+  @Unprotected()
   refreshToken(@Body() body: RefreshTokenDto) {
     const { refreshToken: refreshToken } = body;
 
@@ -56,8 +52,9 @@ export class AuthController {
   }
 
   @Post('/logout')
-  async logout(@Body() body: LogoutDto) {
-    const { token: refreshToken } = body;
+  @Unprotected()
+  async logout(@Body() body: RefreshTokenDto) {
+    const { refreshToken: refreshToken } = body;
 
     await this.authService.logout(refreshToken);
   }

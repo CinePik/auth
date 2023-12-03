@@ -159,7 +159,7 @@ export class KeycloakService {
   async refreshToken(refreshToken: string): Promise<LoginResponse> {
     const { data } = await firstValueFrom(
       this.httpService.post(
-        `${this.baseURL}/auth/realms/${this.realm}/protocol/openid-connect/token`,
+        `${this.baseURL}/realms/${this.realm}/protocol/openid-connect/token`,
         new URLSearchParams({
           client_id: this.clientId,
           client_secret: this.clientSecret,
@@ -175,7 +175,7 @@ export class KeycloakService {
   async logout(refreshToken: string) {
     await firstValueFrom(
       this.httpService.post(
-        `${this.baseURL}/auth/realms/${this.realm}/protocol/openid-connect/logout`,
+        `${this.baseURL}/realms/${this.realm}/protocol/openid-connect/logout`,
         new URLSearchParams({
           client_id: this.clientId,
           client_secret: this.clientSecret,
