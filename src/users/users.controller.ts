@@ -25,10 +25,4 @@ export class UsersController {
   getAll(): string {
     return `${this.usersService.getHello()} from all`;
   }
-  @Get('me')
-  getProfile(@Request() req) {
-    // Guard will automatically invoke our passport-jwt custom configured strategy,
-    // validate the JWT, and assign the user property to the Request object
-    return req.user;
-  }
 }
