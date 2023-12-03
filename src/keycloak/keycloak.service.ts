@@ -144,7 +144,7 @@ export class KeycloakService {
   async getUserInfo(accessToken: string): Promise<UserInfoResponse> {
     const { data } = await firstValueFrom(
       this.httpService.get(
-        `${this.baseURL}/auth/realms/${this.realm}/protocol/openid-connect/userinfo`,
+        `${this.baseURL}/realms/${this.realm}/protocol/openid-connect/userinfo`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

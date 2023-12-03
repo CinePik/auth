@@ -5,10 +5,11 @@ import { AuthController } from './auth.controller';
 import { HttpModule } from '@nestjs/axios';
 import { KeycloakService } from 'src/keycloak/keycloak.service';
 import { KeycloakModule } from 'src/keycloak/keycloak.module';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [UsersModule, HttpModule, KeycloakModule],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}
