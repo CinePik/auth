@@ -11,10 +11,8 @@ export class AuthController {
   constructor(private authService: AuthService) {}
   @Post('/login')
   @Unprotected()
-  async login(
-    @Body() loginDto: LoginDto,
-  ): Promise<Observable<AxiosResponse<any, any>>> {
-    return this.authService.login(loginDto);
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto.username, loginDto.password);
   }
 
   @Post('/register')
