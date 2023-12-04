@@ -3,7 +3,6 @@
   <a href="https://www.keycloak.org/" target="blank"><img src="https://www.keycloak.org/resources/images/icon.svg" width="100" alt="Keycloak Logo" /></a>
 </p>
 
-
 <p align="center">
   <a href="https://github.com/CinePik/auth/actions/workflows/ci.yml" target="_blank">
     <img src="https://github.com/CinePik/auth/actions/workflows/ci.yml/badge.svg" alt="Catalog CI Workflow Status" />

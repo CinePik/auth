@@ -4,7 +4,10 @@
     "dictionaryDefinitions": [],
     "dictionaries": [],
     "words": [
-        "keycloak"
+        "cinepik",
+        "dockerhub",
+        "keycloak",
+        "nestjs"
     ],
     "ignoreWords": [],
     "import": []
