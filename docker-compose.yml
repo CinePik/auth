@@ -1,8 +1,9 @@
-version: '3.4'
+version: '3.8'
 
 name: auth
 services:
   keycloak:
+    container_name: cinepik-keycloak
     image: quay.io/keycloak/keycloak:23.0.1
     ports:
       - ${KEYCLOAK_PORT}:${KEYCLOAK_PORT}
@@ -14,7 +15,8 @@ services:
     entrypoint: '/opt/keycloak/bin/kc.sh start-dev --import-realm'
     restart: always
 
-  nest:
+  auth:
+    container_name: cinepik-auth
     build: .
     command: npm run start:dev
     volumes:
@@ -26,7 +28,7 @@ services:
       - keycloak
     environment:
       NODE_ENV: development
-      KEYCLOAK_BASE_URL: 'http://keycloak:8080'
+      KEYCLOAK_BASE_URL: 'http://keycloak:${KEYCLOAK_PORT}'
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_REALM_RSA_PUBLIC_KEY: ${KEYCLOAK_REALM_RSA_PUBLIC_KEY}
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
