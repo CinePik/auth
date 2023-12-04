@@ -18,7 +18,6 @@ WORKDIR /usr/src/app
 
 COPY --from=build /build/ ./
 
-ENV NODE_PORT=9999
 EXPOSE ${NODE_PORT}
 
 CMD [ "npm", "run", "start:prod" ]
