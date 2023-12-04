@@ -1,0 +1,40 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: deploy
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Get current time
+        id: current-time
+        uses: josStorer/get-current-time@v2.0.2
+        with:
+          format: YYYY-MM-DD-HH-mm-ss
+          utcOffset: '+01:00'
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-auth:latest, ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-auth:${{ steps.current-time.outputs.formattedTime }}
+
+      - name: Notify success
+        if: success()
+        run: echo "The Docker image was built and pushed successfully."
