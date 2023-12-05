@@ -48,8 +48,10 @@ spec:
                 configMapKeyRef:
                   name: auth-config
                   key: KEYCLOAK_CLIENT_ID
-        - image: quay.io/keycloak/keycloak:23.0.1
+        - image: sebam/cinepik-keycloak:latest
           name: cinepik-keycloak
+          command: ['/opt/keycloak/bin/kc.sh']
+          args: ['start-dev']
           env:
             - name: KEYCLOAK_PORT
               value: '8080'
