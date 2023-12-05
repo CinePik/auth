@@ -48,24 +48,6 @@ spec:
                 configMapKeyRef:
                   name: auth-config
                   key: KEYCLOAK_CLIENT_ID
-        - image: sebam/cinepik-keycloak:latest
-          name: cinepik-keycloak
-          command: ['/opt/keycloak/bin/kc.sh']
-          args: ['start-dev']
-          env:
-            - name: KEYCLOAK_PORT
-              value: '8080'
-            - name: KEYCLOAK_ADMIN
-              valueFrom:
-                secretKeyRef:
-                  name: keycloak-credentials
-                  key: KEYCLOAK_ADMIN
-            - name: KEYCLOAK_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: keycloak-credentials
-                  key: KEYCLOAK_ADMIN_PASSWORD
-
           ports:
             - containerPort: 3000
               name: server
