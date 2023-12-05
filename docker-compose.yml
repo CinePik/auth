@@ -14,8 +14,6 @@ services:
       - ./keycloak/:/opt/keycloak/data/import:ro
     entrypoint: '/opt/keycloak/bin/kc.sh start-dev --import-realm'
     restart: always
-    networks:
-      - cinepik-network
 
   auth:
     container_name: cinepik-auth
@@ -30,19 +28,12 @@ services:
       - keycloak
     environment:
       NODE_ENV: development
-      KEYCLOAK_BASE_URL: ${KEYCLOAK_BASE_URL}
+      KEYCLOAK_BASE_URL: 'http://keycloak:${KEYCLOAK_PORT}'
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_REALM_RSA_PUBLIC_KEY: ${KEYCLOAK_REALM_RSA_PUBLIC_KEY}
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
       KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
       KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
-    networks:
-      - cinepik-network
 
 volumes:
   node_modules:
-
-
-networks:
-  cinepik-network:
-    name: cinepik-network
