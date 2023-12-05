@@ -16,7 +16,7 @@ spec:
         - image: sebam/cinepik-auth:latest
           name: cinepik-auth
           env:
-            - name: PORT
+            - name: NODE_PORT
               value: '3000'
             - name: KEYCLOAK_CLIENT_SECRET
               valueFrom:
