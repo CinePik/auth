@@ -94,3 +94,15 @@ spec:
       targetPort: server
   selector:
     app: cinepik-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cinepik-keycloak
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: cinepik-keycloak
