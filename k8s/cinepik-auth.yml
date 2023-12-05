@@ -40,8 +40,8 @@ spec:
                   key: KEYCLOAK_REALM
             - name: KEYCLOAK_REALM_RSA_PUBLIC_KEY
               valueFrom:
-                configMapKeyRef:
-                  name: auth-config
+                secretKeyRef:
+                  name: auth-credentials
                   key: KEYCLOAK_REALM_RSA_PUBLIC_KEY
             - name: KEYCLOAK_CLIENT_ID
               valueFrom:
