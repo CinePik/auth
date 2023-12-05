@@ -48,7 +48,7 @@ spec:
                 configMapKeyRef:
                   name: auth-config
                   key: KEYCLOAK_CLIENT_ID
-        - image: sebam/cinepik-keycloak:latest
+        - image: quay.io/keycloak/keycloak:23.0.1
           name: cinepik-keycloak
           env:
             - name: KEYCLOAK_PORT
