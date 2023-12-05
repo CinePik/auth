@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cinepik-auth-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cinepik-auth
+  template:
+    metadata:
+      labels:
+        app: cinepik-auth
+    spec:
+      containers:
+        - image: sebam/cinepik-auth:latest
+          name: cinepik-auth
+          env:
+            - name: PORT
+              value: '3000'
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-credentials
+                  key: KEYCLOAK_CLIENT_SECRET
+            - name: KEYCLOAK_ADMIN_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-credentials
+                  key: KEYCLOAK_ADMIN_CLIENT_SECRET
+            - name: KEYCLOAK_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: KEYCLOAK_BASE_URL
+            - name: KEYCLOAK_REALM
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: KEYCLOAK_REALM
+            - name: KEYCLOAK_REALM_RSA_PUBLIC_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: KEYCLOAK_REALM_RSA_PUBLIC_KEY
+            - name: KEYCLOAK_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: KEYCLOAK_CLIENT_ID
+        - image: sebam/cinepik-keycloak:latest
+          name: cinepik-keycloak
+          env:
+            - name: KEYCLOAK_PORT
+              value: '8080'
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-credentials
+                  key: KEYCLOAK_ADMIN
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-credentials
+                  key: KEYCLOAK_ADMIN_PASSWORD
+
+          ports:
+            - containerPort: 3000
+              name: server
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health/live
+          #     port: server
+          #   initialDelaySeconds: 20
+          #   periodSeconds: 3
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health/ready
+          #     port: server
+          #   initialDelaySeconds: 20
+          #   periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cinepik-auth
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: server
+  selector:
+    app: cinepik-auth
