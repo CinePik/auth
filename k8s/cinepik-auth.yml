@@ -71,7 +71,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 3000
+    - port: 80
       protocol: TCP
       targetPort: server
   selector:
