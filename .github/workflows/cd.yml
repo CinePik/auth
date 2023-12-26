@@ -38,8 +38,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_REPO }}/cinepik-auth:latest
-            ${{ secrets.DOCKERHUB_REPO }}/cinepik-auth:${{ env.TAG }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-auth:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-auth:${{ env.TAG }}
             ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-auth:${{ steps.current-time.outputs.formattedTime }}
 
 
