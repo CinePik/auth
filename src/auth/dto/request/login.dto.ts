@@ -3,7 +3,6 @@ import { IsAlphanumeric, IsNotEmpty } from 'class-validator';
 
 export class LoginDto {
   @IsAlphanumeric()
-  @IsNotEmpty()
   @ApiProperty({
     description: "User's username.",
   })
