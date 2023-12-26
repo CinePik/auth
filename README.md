@@ -34,6 +34,7 @@ npm run start:dev
 # production mode
 npm run start:prod
 ```
+OpenAPI documentation available at [http://localhost:3000/api](http://localhost:3000/api)
 
 ## Test
 
@@ -55,8 +56,6 @@ To run the app in a docker container, run the following commands.
 ```bash
 docker network create cinepik-network
 
-docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:23.0.1 start-dev
-
 docker build -t cinepik-auth .
 
 docker run -d -t --env-file .env --network cinepik-network -p 3000:3000 cinepik-auth
@@ -74,7 +73,7 @@ docker push <dockerhub_username>/cinepik-auth:latest
 
 ### Docker Compose (recommend)
 
-You can also setup the Keycloak and application with docker-compose.
+You can also setup the application with docker-compose.
 
 ```bash
 docker-compose up
