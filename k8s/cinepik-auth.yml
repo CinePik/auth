@@ -23,11 +23,6 @@ spec:
                 secretKeyRef:
                   name: keycloak-credentials
                   key: KEYCLOAK_CLIENT_SECRET
-            - name: KEYCLOAK_ADMIN_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: keycloak-credentials
-                  key: KEYCLOAK_ADMIN_CLIENT_SECRET
             - name: KEYCLOAK_BASE_URL
               valueFrom:
                 configMapKeyRef:
@@ -48,6 +43,16 @@ spec:
                 configMapKeyRef:
                   name: keycloak-config
                   key: KEYCLOAK_CLIENT_ID
+            - name: KEYCLOAK_ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-credentials
+                  key: KEYCLOAK_ADMIN
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-credentials
+                  key: KEYCLOAK_ADMIN_PASSWORD
           ports:
             - containerPort: 3000
               name: server

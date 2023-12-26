@@ -33,6 +33,8 @@ export class KeycloakService {
   private clientId: string;
   private clientSecret: string;
   private adminClientSecret: string;
+  private adminName: string;
+  private adminPassword: string;
   private readonly logger = new Logger(KeycloakService.name);
 
   constructor(
@@ -43,9 +45,8 @@ export class KeycloakService {
     this.realm = this.configService.get('KEYCLOAK_REALM');
     this.clientId = this.configService.get('KEYCLOAK_CLIENT_ID');
     this.clientSecret = this.configService.get('KEYCLOAK_CLIENT_SECRET');
-    this.adminClientSecret = this.configService.get(
-      'KEYCLOAK_ADMIN_CLIENT_SECRET',
-    );
+    this.adminName = this.configService.get('KEYCLOAK_ADMIN');
+    this.adminPassword = this.configService.get('KEYCLOAK_ADMIN_PASSWORD');
   }
 
   async login(username: string, password: string): Promise<LoginResponse> {
@@ -121,9 +122,10 @@ export class KeycloakService {
         .post(
           `${this.baseURL}/realms/master/protocol/openid-connect/token`,
           {
-            grant_type: 'client_credentials',
+            grant_type: 'password',
             client_id: 'admin-cli',
-            client_secret: this.adminClientSecret,
+            username: this.adminName,
+            password: this.adminPassword,
           },
           {
             headers: {
