@@ -51,23 +51,16 @@ export class KeycloakService {
 
   async login(username: string, password: string): Promise<LoginResponse> {
     const { data } = await firstValueFrom(
-      this.httpService
-        .post(
-          `${this.baseURL}/realms/${this.realm}/protocol/openid-connect/token`,
-          new URLSearchParams({
-            client_id: this.clientId,
-            client_secret: this.clientSecret,
-            grant_type: 'password',
-            username,
-            password,
-          }),
-        )
-        .pipe(
-          catchError((error: AxiosError) => {
-            this.logger.error(error);
-            throw new UnauthorizedException(error);
-          }),
-        ),
+      this.httpService.post(
+        `${this.baseURL}/realms/${this.realm}/protocol/openid-connect/token`,
+        new URLSearchParams({
+          client_id: this.clientId,
+          client_secret: this.clientSecret,
+          grant_type: 'password',
+          username,
+          password,
+        }),
+      ),
     );
 
     return data;
@@ -80,37 +73,30 @@ export class KeycloakService {
     lastName: string,
   ): Promise<LoginResponse> {
     const { data } = await firstValueFrom(
-      this.httpService
-        .post(
-          `${this.baseURL}/admin/realms/${this.realm}/users`,
-          {
-            username,
-            firstName,
-            lastName,
-            enabled: 'true',
-            credentials: [
-              {
-                type: 'password',
-                value: password,
-                temporary: false,
-              },
-            ],
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization:
-                'Bearer ' + (await this.getAdminToken()).access_token,
+      this.httpService.post(
+        `${this.baseURL}/admin/realms/${this.realm}/users`,
+        {
+          username,
+          firstName,
+          lastName,
+          enabled: 'true',
+          credentials: [
+            {
+              type: 'password',
+              value: password,
+              temporary: false,
             },
+          ],
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization:
+              'Bearer ' + (await this.getAdminToken()).access_token,
           },
-        )
-        .pipe(
-          catchError((error: AxiosError) => {
-            this.logger.error(error);
-            throw new UnauthorizedException(error);
-          }),
-        ),
+        },
+      ),
     );
 
     return data;
@@ -118,27 +104,20 @@ export class KeycloakService {
 
   async getAdminToken(): Promise<LoginResponse> {
     const { data } = await firstValueFrom(
-      this.httpService
-        .post(
-          `${this.baseURL}/realms/master/protocol/openid-connect/token`,
-          {
-            grant_type: 'password',
-            client_id: 'admin-cli',
-            username: this.adminName,
-            password: this.adminPassword,
+      this.httpService.post(
+        `${this.baseURL}/realms/master/protocol/openid-connect/token`,
+        {
+          grant_type: 'password',
+          client_id: 'admin-cli',
+          username: this.adminName,
+          password: this.adminPassword,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
-          {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-          },
-        )
-        .pipe(
-          catchError((error: AxiosError) => {
-            this.logger.error(error.response.data);
-            throw new HttpException(error.response.data, error.response.status);
-          }),
-        ),
+        },
+      ),
     );
     return data;
   }

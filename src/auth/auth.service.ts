@@ -1,11 +1,15 @@
 import {
+  BadRequestException,
   HttpException,
+  HttpStatus,
   Injectable,
+  InternalServerErrorException,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { KeycloakService } from '../keycloak/keycloak.service';
+import { AxiosError } from 'axios';
 
 type LoginResponse = {
   access_token: string;
@@ -24,10 +28,15 @@ export class AuthService {
 
   async login(username: string, password: string): Promise<LoginResponse> {
     const { access_token, expires_in, refresh_token, refresh_expires_in } =
-      await this.keycloakService.login(username, password).catch((error) => {
-        console.log(error);
-        throw new UnauthorizedException(error);
-      });
+      await this.keycloakService
+        .login(username, password)
+        .catch((error: AxiosError) => {
+          const message = error.response.data;
+          const status = error.response.status;
+
+          this.logger.warn(`Login failed with status ${status}`, message);
+          throw new HttpException(message, status);
+        });
 
     return {
       access_token,
@@ -47,8 +56,11 @@ export class AuthService {
       await this.keycloakService
         .register(username, password, firstName, lastName)
         .catch((error) => {
-          console.log(error);
-          throw new UnauthorizedException(error);
+          const message = error.response.data;
+          const status = error.response.status;
+
+          this.logger.warn(`Register failed with status ${status}`, message);
+          throw new HttpException(message, status);
         });
 
     return {
@@ -64,8 +76,11 @@ export class AuthService {
     const data = await this.keycloakService
       .getUserInfo(token)
       .catch((error) => {
-        console.log(error);
-        throw new UnauthorizedException(error);
+        const message = error.response.data;
+        const status = error.response.status;
+
+        this.logger.warn(`Get profile failed with status ${status}`, message);
+        throw new HttpException(message, status);
       });
 
     return data;
@@ -74,9 +89,12 @@ export class AuthService {
   async refreshToken(token: string): Promise<any> {
     const data = await this.keycloakService
       .refreshToken(token)
-      .catch((error) => {
-        console.log(error);
-        throw new UnauthorizedException(error);
+      .catch((error: AxiosError) => {
+        const message = error.response.data;
+        const status = error.response.status;
+
+        this.logger.warn(`Refresh token failed with status ${status}`, message);
+        throw new HttpException(message, status);
       });
 
     return data;
@@ -84,8 +102,11 @@ export class AuthService {
 
   async logout(token: string): Promise<any> {
     const data = await this.keycloakService.logout(token).catch((error) => {
-      console.log(error);
-      throw new UnauthorizedException(error);
+      const message = error.response.data;
+      const status = error.response.status;
+
+      this.logger.warn(`Logout failed with status ${status}`, message);
+      throw new HttpException(message, status);
     });
 
     return data;

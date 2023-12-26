@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return current project version', () => {
+      expect(appController.info()).toContain('CinePik auth v');
     });
   });
 });
