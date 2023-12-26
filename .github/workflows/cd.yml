@@ -28,8 +28,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
       - name: Extract version and set it to TAG env var
-      run: |
-        echo "TAG=$(jq -r '.version' package.json)" >> $GITHUB_ENV
+        run: |
+          echo "TAG=$(jq -r '.version' package.json)" >> $GITHUB_ENV
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
