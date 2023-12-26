@@ -21,32 +21,32 @@ spec:
             - name: KEYCLOAK_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: auth-credentials
+                  name: keycloak-credentials
                   key: KEYCLOAK_CLIENT_SECRET
             - name: KEYCLOAK_ADMIN_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: auth-credentials
+                  name: keycloak-credentials
                   key: KEYCLOAK_ADMIN_CLIENT_SECRET
             - name: KEYCLOAK_BASE_URL
               valueFrom:
                 configMapKeyRef:
-                  name: auth-config
+                  name: keycloak-config
                   key: KEYCLOAK_BASE_URL
             - name: KEYCLOAK_REALM
               valueFrom:
                 configMapKeyRef:
-                  name: auth-config
+                  name: keycloak-config
                   key: KEYCLOAK_REALM
             - name: KEYCLOAK_REALM_RSA_PUBLIC_KEY
               valueFrom:
                 secretKeyRef:
-                  name: auth-credentials
+                  name: keycloak-credentials
                   key: KEYCLOAK_REALM_RSA_PUBLIC_KEY
             - name: KEYCLOAK_CLIENT_ID
               valueFrom:
                 configMapKeyRef:
-                  name: auth-config
+                  name: keycloak-config
                   key: KEYCLOAK_CLIENT_ID
           ports:
             - containerPort: 3000

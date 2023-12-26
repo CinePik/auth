@@ -4,7 +4,7 @@ FROM node:18-alpine AS build
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY [ "package.json", "package-lock.json", "tsconfig*.json", "./" ]
+COPY package*.json tsconfig*.json ./
 
 # Install dependencies
 RUN npm ci
