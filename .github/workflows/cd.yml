@@ -27,13 +27,21 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
+      - name: Extract version and set it to TAG env var
+      run: |
+        echo "TAG=$(jq -r '.version' package.json)" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-auth:latest, ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-auth:${{ steps.current-time.outputs.formattedTime }}
+          tags: |
+            ${{ secrets.DOCKERHUB_REPO }}/cinepik-auth:latest
+            ${{ secrets.DOCKERHUB_REPO }}/cinepik-auth:${{ env.TAG }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/cinepik-auth:${{ steps.current-time.outputs.formattedTime }}
+
 
       - name: Notify success
         if: success()
