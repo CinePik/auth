@@ -103,13 +103,13 @@ kubectl create secret generic keycloak-config --from-literal=KEYCLOAK_ADMIN="adm
 Apply deployment
 
 ```bash
-kubectl apply -f k8s\cinepik-auth.yml
+kubectl apply -f k8s/cinepik-auth.yml
 ```
 
 Apply service
 
 ```bash
-kubectl apply -f k8s\cinepik-auth-svc.yml
+kubectl apply -f k8s/cinepik-auth-svc.yml
 ```
 
 ### Other useful commands
@@ -122,4 +122,6 @@ kubectl rollout restart deployment/cinepik-auth-deployment
 kubectl logs <pod-id>
 kubectl describe secret <secret-name>
 kubectl get secret <secret-name>
+kubectl get service
+kubectl describe pods
 ```

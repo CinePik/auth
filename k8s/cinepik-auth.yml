@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: cinepik-auth-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: cinepik-auth
@@ -62,4 +62,3 @@ spec:
                   key: KEYCLOAK_ADMIN_PASSWORD
           ports:
             - containerPort: 3000
-              name: server
