@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: cinepik-auth-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: cinepik-auth
@@ -15,6 +15,13 @@ spec:
       containers:
         - image: sebam/cinepik-auth:latest
           name: cinepik-auth
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
           env:
             - name: NODE_PORT
               value: '3000'
@@ -55,29 +62,3 @@ spec:
                   key: KEYCLOAK_ADMIN_PASSWORD
           ports:
             - containerPort: 3000
-              name: server
-          # livenessProbe:
-          #   httpGet:
-          #     path: /health/live
-          #     port: server
-          #   initialDelaySeconds: 20
-          #   periodSeconds: 3
-          # readinessProbe:
-          #   httpGet:
-          #     path: /health/ready
-          #     port: server
-          #   initialDelaySeconds: 20
-          #   periodSeconds: 3
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: cinepik-auth
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 80
-      protocol: TCP
-      targetPort: server
-  selector:
-    app: cinepik-auth
