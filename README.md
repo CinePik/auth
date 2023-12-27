@@ -83,3 +83,43 @@ docker-compose up
 
 docker-compose down
 ```
+
+## Kubernetes Deployment
+
+Create config map for keycloak
+
+```bash
+kubectl create configmap keycloak-config --from-literal=KEYCLOAK_BASE_URL="http://cinepik-keycloak" --from-literal=KEYCLOAK_CLIENT_ID="nest-auth" --from-literal=KEYCLOAK_PORT=8080 --from-literal=KEYCLOAK_REALM="cinepik"
+```
+
+Create secret for keycloak
+
+```bash
+kubectl create secret generic keycloak-config --from-literal=KEYCLOAK_ADMIN="admin" --from-literal=KEYCLOAK_ADMIN_PASSWORD="<REPLACE_ME>" --from-literal=KEYCLOAK_CLIENT_SECRET="<REPLACE_ME>" --from-literal=KEYCLOAK_REALM_RSA_PUBLIC_KEY="<REPLACE_ME>"
+```
+
+### Apply changes
+
+Apply deployment
+
+```bash
+kubectl apply -f k8s\cinepik-auth.yml
+```
+
+Apply service
+
+```bash
+kubectl apply -f k8s\cinepik-auth-svc.yml
+```
+
+### Other useful commands
+
+```bash
+kubectl get pods
+kubectl delete deployment cinepik-auth-deployment
+kubectl delete configmap <configmap name>
+kubectl rollout restart deployment/cinepik-auth-deployment
+kubectl logs <pod-id>
+kubectl describe secret <secret-name>
+kubectl get secret <secret-name>
+```
