@@ -5,10 +5,6 @@ services:
   auth:
     container_name: cinepik-auth
     build: .
-    command: npm run start:dev
-    volumes:
-      - .:/app
-      - node_modules:/app/node_modules
     ports:
       - ${NODE_PORT}:${NODE_PORT}
     environment:
@@ -17,10 +13,6 @@ services:
       - .env
     networks:
       - cinepik-network
-
-volumes:
-  node_modules:
-
 
 networks:
   cinepik-network:
