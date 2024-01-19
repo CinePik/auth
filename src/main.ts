@@ -13,6 +13,8 @@ async function bootstrap() {
     .setTitle('CinePik Authentication API')
     .setDescription('The CinePik Authentication microservice.')
     .setVersion(version)
+    .addServer(`http://localhost:${port}`)
+    .addServer('http://cinepik.fun/auth')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
