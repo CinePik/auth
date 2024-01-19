@@ -1,14 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-import { Unprotected } from 'nest-keycloak-connect';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Unprotected } from 'nest-keycloak-connect';
+import { AppService } from './app.service';
 
 @Controller()
+@Unprotected()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  @Unprotected()
   @ApiResponse({
     status: 200,
     description: 'Got project version successfully.',

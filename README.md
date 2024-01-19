@@ -17,7 +17,7 @@
 Node.js microservice for authorization and authentication using [Keycloak](https://www.keycloak.org/).
 
 ## Documentation
-OpenAPI documentation available at [http://localhost:3000/api](http://localhost:3000/api).  
+OpenAPI documentation available at [http://localhost:3000/api](http://localhost:3000/openapi).  
 For accessing secured endpoints add your `access_token` provided to you at login to the `Authorization` header.
 
 ## Installation
